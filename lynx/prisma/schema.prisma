@@ -110,19 +110,15 @@ model Clinic {
 
 model Appointment {
   id                String   @id @default(cuid())
-  patientName       String
-  phone             String
-  patientAge        Int
-  patientGender     Gender
   appointmentDate   DateTime
   appointmentNumber Int
   clinicId          String
-  bookedByUserId    String
   status            String   @default("PENDING")
   clinic            Clinic   @relation(fields: [clinicId], references: [id])
-  bookedByUser      User     @relation(fields: [bookedByUserId], references: [id])
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  User              User?    @relation(fields: [userId], references: [id])
+  userId            String?
 }
 
 enum Gender {

@@ -17,7 +17,7 @@ export default async function YourBookings({ clinicId, userId }: { clinicId: str
     const appointments = await prisma.appointment.findMany({
         where: {
             clinicId: clinicId,
-            bookedByUserId: userId,
+            userId: userId,
             appointmentDate: {
                 gte: new Date(new Date().setHours(0, 0, 0, 0))
             }
@@ -36,8 +36,6 @@ export default async function YourBookings({ clinicId, userId }: { clinicId: str
                             <div>
                                 <h3 className="text-lg font-bold">{new Date(appointment.appointmentDate).toLocaleDateString('en-GB')}</h3>
                                 <p className="font-bold text-md">Appointment Number :  {appointment.appointmentNumber}</p>
-                                <p>Patient Name : {appointment.patientName}</p>
-                                <p>Gender : {appointment.patientGender} </p>
                             </div>
                             <div className="h-full flex items-end">
                                 <Dialog>
@@ -59,11 +57,9 @@ export default async function YourBookings({ clinicId, userId }: { clinicId: str
                                                     </div>
                                                     <div className="flex justify-center">
                                                         <dt>Patient Name : </dt>
-                                                        <dd > {appointment.patientName}</dd>
                                                     </div>
                                                     <div className="flex justify-center">
                                                         <dt>Gender : </dt>
-                                                        <dd> {appointment.patientGender}</dd>
                                                     </div>
                                                 </ul>
                                             </DialogDescription>

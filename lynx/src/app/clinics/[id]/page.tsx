@@ -59,7 +59,7 @@ export default async function ClinicInfoPage({ params }: { params: { id: string 
                                 </article>
                                 <div className="md:flex  justify-between max-w-5xl  mx-auto mt-5 max-h-min">
                                     <YourBookings clinicId={clinicId} userId={session.user.id} />
-                                    <BookingForm clinicId={clinic.id} userId={session.user.id} />
+                                    <BookingForm clinicId={clinic.id} user={session.user} />
                                 </div>
                             </div>
                         </main>

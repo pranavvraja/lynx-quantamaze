@@ -21,14 +21,6 @@ import { useToast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Enter your name" }),
-    phone: z.string().regex(/^[6-9]\d{9}$/, { message: "Enter a valid phone number" }),
-    gender: z.enum(["male", "female", "other"]),
-    age: z.string().transform((v) => Number(v) || 0).refine((age) => {
-        return age < 150
-    }, {
-        message: "Enter a valid age",
-        path: ["age"]
-    }),
     appointment_date: z.date().refine((date) => {
         const now = new Date();
         const maxDate = new Date(now);
@@ -39,26 +31,33 @@ const formSchema = z.object({
     })
 })
 
-export default function BookingForm({ clinicId, userId }: { clinicId: string, userId: string }) {
+export default function BookingForm({ clinicId, user }: { clinicId: string, user: any }) {
     const [submitButton, setSubmitButton] = useState<boolean | undefined>(false)
     const { toast } = useToast()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: ""
+            name: user.name,
         }
 
     })
 
     const handleSubmitx = (formdata: z.infer<typeof formSchema>) => {
         setSubmitButton(true)
+        // const data = {
+        //     ...formdata,
+        //     clinicId,
+        //     userId
+        // }
+        // console.log(data)
+
+
         const data = {
             ...formdata,
-            clinicId,
-            userId
+            clinicId: clinicId,
+            userId: user.id,
         }
-        console.log(data)
 
         fetch("/api/appointments/book", {
             method: "POST",
@@ -69,10 +68,8 @@ export default function BookingForm({ clinicId, userId }: { clinicId: string, us
         }).then(
             (res) => res.json().then((data) => {
                 if (res.ok) {
-                    form.reset({ name: "", phone: "", age: 0, gender: "other" })
-                    const date = new Date(data.date).toDateString()
                     toast({
-                        title: `Your appointment number is ${data.number} on ${date}`,
+                        title: `Your appointment number is ${data.number} on ${data.date}`,
                     })
                 } else {
                     toast({
@@ -81,7 +78,30 @@ export default function BookingForm({ clinicId, userId }: { clinicId: string, us
                     })
                 }
             })
-        ).catch(err => console.log(err))
+        )
+
+        // fetch("/api/appointments/book", {
+        //     method: "POST",
+        //     body: JSON.stringify(data),
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     }
+        // }).then(
+        //     (res) => res.json().then((data) => {
+        //         if (res.ok) {
+        //             form.reset({ name: "", phone: "", age: 0, gender: "other" })
+        //             const date = new Date(data.date).toDateString()
+        //             toast({
+        //                 title: `Your appointment number is ${data.number} on ${date}`,
+        //             })
+        //         } else {
+        //             toast({
+        //                 title: "Error",
+        //                 description: data.message,
+        //             })
+        //         }
+        //     })
+        // ).catch(err => console.log(err))
 
         setSubmitButton(false)
     }
@@ -97,44 +117,8 @@ export default function BookingForm({ clinicId, userId }: { clinicId: string, us
                         return <FormItem>
                             <FormLabel>Name</FormLabel>
                             <FormControl>
-                                <Input placeholder="Patients name" {...field} />
+                                <Input disabled placeholder={user.name} {...field} />
                             </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    }} />
-                    <FormField control={form.control} name="phone" render={({ field }) => {
-                        return <FormItem>
-                            <FormLabel>Phone</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Phone Number" {...field} type="tel" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    }} />
-                    <FormField control={form.control} name="age" render={({ field }) => {
-                        return <FormItem>
-                            <FormLabel>Patients age</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Patients age" {...field} type="number" />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    }} />
-                    <FormField control={form.control} name="gender" render={({ field }) => {
-                        return <FormItem>
-                            <FormLabel>Gender</FormLabel>
-                            <Select onValueChange={field.onChange}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select patient's gender"></SelectValue>
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="male">Male</SelectItem>
-                                    <SelectItem value="female">Female</SelectItem>
-                                    <SelectItem value="other">Other</SelectItem>
-                                </SelectContent>
-                            </Select>
                             <FormMessage />
                         </FormItem>
                     }} />
