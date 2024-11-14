@@ -32,6 +32,7 @@ model User {
   Clinic      Clinic[]      @relation("ClinicOwner")
   AdminIn     Clinic[]      @relation("ClinicAdmin")
   Appointment Appointment[]
+  Files       Files[]
 }
 
 enum Role {
@@ -125,4 +126,12 @@ enum Gender {
   Male
   Female
   Other
+}
+
+model Files {
+  id        String   @id @default(cuid())
+  userId    String
+  User      User?    @relation(fields: [userId], references: [id])
+  url       String
+  createdAt DateTime @default(now())
 }
