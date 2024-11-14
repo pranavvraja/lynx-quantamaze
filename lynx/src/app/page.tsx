@@ -2,6 +2,7 @@ import Navbar from "@/components/navbar/navbar";
 import { HeroImage } from "@/components/landing/heroimage";
 import HeroSection from "@/components/landing/herosection";
 import Features from "@/components/landing/features";
+import UploadImage from "@/components/uploadthing/page";
 
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
       <HeroSection />
       <HeroImage />
       <Features />
+      <UploadImage />
     </div>
   );
 }
