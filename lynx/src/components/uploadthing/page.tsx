@@ -4,14 +4,15 @@ import { UploadButton } from "@/utils/uploadthing";
 
 export default function UploadImage({ userId }: { userId: string | undefined }) {
 
-  async function saveFileUrlToDB(fileUrl: string) {
+  async function saveFileUrlToDB(fres: any) {
+    const fileUrl = fres[0].url;
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, fileUrl }),
+        body: JSON.stringify({ userId, fileUrl, fileName: fres[0].name }),
       });
 
       if (!res.ok) {
@@ -35,7 +36,7 @@ export default function UploadImage({ userId }: { userId: string | undefined }) 
             console.log("Uploaded file URL: ", fileUrl);
 
             // Call saveFileUrlToDB to save the URL in the database
-            saveFileUrlToDB(fileUrl);
+            saveFileUrlToDB(res);
             alert("Upload Completed and URL saved in DB");
           }
         }}

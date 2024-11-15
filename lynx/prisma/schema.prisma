@@ -134,6 +134,7 @@ model Files {
   userId    String
   User      User?    @relation(fields: [userId], references: [id])
   url       String
+  name      String   @default("unnamed")
   createdAt DateTime @default(now())
 }
 

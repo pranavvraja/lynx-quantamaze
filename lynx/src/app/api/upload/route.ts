@@ -4,7 +4,7 @@ import { prisma } from '@/prisma'; // Adjust the path to your prisma instance
 // Named export for the POST method
 export async function POST(req: Request) {
     try {
-        const { userId, fileUrl } = await req.json();
+        const { userId, fileUrl, fileName } = await req.json();
 
         if (!userId || !fileUrl) {
             return NextResponse.json({ error: 'Missing userId or fileUrl' }, { status: 400 });
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
             data: {
                 userId,
                 url: fileUrl,
+                name: fileName
             },
         });
 
