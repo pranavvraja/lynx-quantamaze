@@ -3,6 +3,68 @@ import { prisma } from '@/prisma'; // Adjust the path to your prisma instance
 
 // Named export for the POST method
 export async function POST(req: Request) {
+    const defaultMedicalReport = {
+        hemogram: {
+            hemoglobin: {
+                value: null,
+                unit: "g/dL",
+                lastUpdated: null,
+            },
+            whiteBloodCells: {
+                value: null,
+                unit: "cells/mcL",
+                lastUpdated: null,
+            },
+            redBloodCells: {
+                value: null,
+                unit: "cells/mcL",
+                lastUpdated: null,
+            },
+            platelets: {
+                value: null,
+                unit: "cells/mcL",
+                lastUpdated: null,
+            },
+            meanCorpuscularVolume: {
+                value: null,
+                unit: "fL",
+                lastUpdated: null,
+            },
+            meanCorpuscularHemoglobin: {
+                value: null,
+                unit: "pg",
+                lastUpdated: null,
+            }
+        },
+        lipidProfile: {
+            totalCholesterol: {
+                value: null,
+                unit: "mg/dL",
+                lastUpdated: null,
+            },
+            hdl: {
+                value: null,
+                unit: "mg/dL",
+                lastUpdated: null,
+            },
+            ldl: {
+                value: null,
+                unit: "mg/dL",
+                lastUpdated: null,
+            },
+            triglycerides: {
+                value: null,
+                unit: "mg/dL",
+                lastUpdated: null,
+            },
+            nonHdlCholesterol: {
+                value: null,
+                unit: "mg/dL",
+                lastUpdated: null,
+            }
+        },
+        // Add other panels similarly
+    };
     try {
         const { userId, fileUrl, fileName } = await req.json();
 
@@ -29,10 +91,10 @@ export async function POST(req: Request) {
         });
 
         // Assuming currentJson is an array, you might need to extract the first element:
-        const formattedData = currentJson[0]?.data || {}; // Or format this data as needed
+        const formattedData = currentJson[0]?.data || defaultMedicalReport; // Or format this data as needed
 
         // Then, use the formattedData in your POST request:
-        const extract = await fetch("https://cf1f-36-255-14-9.ngrok-free.app/process-pdf", {
+        const extract = await fetch("https://b95b-36-255-14-9.ngrok-free.app/process-pdf", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -44,15 +106,17 @@ export async function POST(req: Request) {
 
         console.log(extracted);
 
+        const parsedExtracted = JSON.parse(extracted);
+
         const uploadeddata = await prisma.medicalData.upsert({
             where: {
                 userId: userId
             },
             update: {
-                data: extracted
+                data: parsedExtracted
             }, create: {
                 userId: userId,
-                data: extracted
+                data: parsedExtracted
             }
         })
 

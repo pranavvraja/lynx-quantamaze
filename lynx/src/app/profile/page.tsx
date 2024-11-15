@@ -68,13 +68,21 @@ export default async function Profile() {
                     </div>
                     <Separator className="my-6" />
                 </div>
+
+                <div className="rounded-lg p-6 shadow-sm">
+                    This is for the medical data
+                </div>
+                <Separator className="my-6" />
+                <h2 className="text-2xl font-bold mb-6">Your Medical Reports</h2>
                 <div className="p-4 bg-white rounded-lg shadow-lg">
                     {allfiles.length > 0 ? (
                         <div className="space-y-4">
                             {allfiles.map((file: any) => (
                                 <div key={file.id} className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow duration-200">
                                     <p className="text-gray-700 font-medium">
-                                        {file}
+                                        <p>
+                                            {file.name}
+                                        </p>
                                         <a
                                             href={file.url}
                                             target="_blank"
@@ -92,6 +100,7 @@ export default async function Profile() {
                     )}
                 </div>
 
+                <Separator className="my-6" />
                 <div className="rounded-lg p-6 shadow-sm">
                     <h2 className="text-2xl font-bold mb-6">Your Appointments</h2>
                     {
