@@ -3,9 +3,13 @@ import fitz  # PyMuPDF, for converting PDF pages to images
 from paddleocr import PaddleOCR
 from groq import Groq
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict
+
+load_dotenv()
+
 
 # Initialize FastAPI
 app = FastAPI()
@@ -69,7 +73,7 @@ async def process_pdf(pdf_request: PDFRequest):
         extracted_text = extract_text_from_images(image_paths)
 
         # Step 4: Interact with Groq API
-        api_key = "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"
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise HTTPException(status_code=500, detail="API key is missing")
         
