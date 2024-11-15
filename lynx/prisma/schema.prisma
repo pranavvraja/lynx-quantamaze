@@ -33,6 +33,7 @@ model User {
   AdminIn     Clinic[]      @relation("ClinicAdmin")
   Appointment Appointment[]
   Files       Files[]
+  medicalData medicalData[]
 }
 
 enum Role {
@@ -134,4 +135,11 @@ model Files {
   User      User?    @relation(fields: [userId], references: [id])
   url       String
   createdAt DateTime @default(now())
+}
+
+model medicalData {
+  id     String @id @default(cuid())
+  userId String @unique
+  User   User?  @relation(fields: [userId], references: [id])
+  data   Json   @default("{}")
 }
