@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
 
         const appointments = await prisma.appointment.findMany({
             where: {
-                bookedByUserId: params.userId,
+                userId: params.userId,
             },
             include: {
                 clinic: true,

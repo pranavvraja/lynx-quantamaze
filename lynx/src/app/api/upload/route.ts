@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/prisma'; // Adjust the path to your prisma instance
 
 // Named export for the POST method
@@ -24,3 +24,31 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to save file' }, { status: 500 });
     }
 }
+
+
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');  // Extract userId from query string
+
+    try {
+        const files = await prisma.files.findMany({
+            where: { userId: userId || undefined },
+        });
+
+        if (!files || files.length === 0) {
+            return NextResponse.json(
+                { message: "No files found for this user." },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(files, { status: 200 });
+    } catch (e) {
+        console.error(e);
+        return NextResponse.json(
+            { message: `An error occurred: ${e}` },
+            { status: 500 }
+        );
+    }
+}
+

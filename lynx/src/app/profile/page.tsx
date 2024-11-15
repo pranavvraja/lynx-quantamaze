@@ -18,6 +18,8 @@ export default async function Profile() {
 
     const userResponse = await fetch(process.env.URL + `/api/user?userId=${session.user.id}`);
     const appointmentResponse = await fetch(process.env.URL + `/api/appointments/user/${session.user.id}`);
+    const files = await fetch(`http://localhost:3000/api/upload?userId=${session.user.id}`)
+    const allfiles = await files.json();
     const data = await userResponse.json()
     const appointments = await appointmentResponse.json()
 
@@ -47,8 +49,11 @@ export default async function Profile() {
 
 
 
+
+
     return (
         <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl">
+
             <div className="grid-cols md:grid-cols-[300px_1fr] gap-8">
                 <div className=" p-6  max-h-min">
                     <div className="flex items-center gap-4">
@@ -63,6 +68,30 @@ export default async function Profile() {
                     </div>
                     <Separator className="my-6" />
                 </div>
+                <div className="p-4 bg-white rounded-lg shadow-lg">
+                    {allfiles.length > 0 ? (
+                        <div className="space-y-4">
+                            {allfiles.map((file: any) => (
+                                <div key={file.id} className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow duration-200">
+                                    <p className="text-gray-700 font-medium">
+                                        {file.name}
+                                        <a
+                                            href={file.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 hover:underline"
+                                        >
+                                            {file.url}
+                                        </a>
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">No files found.</p>
+                    )}
+                </div>
+
                 <div className="rounded-lg p-6 shadow-sm">
                     <h2 className="text-2xl font-bold mb-6">Your Appointments</h2>
                     {
