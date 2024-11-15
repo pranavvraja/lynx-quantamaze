@@ -22,6 +22,10 @@ export default async function Profile() {
     const allfiles = await files.json();
     const data = await userResponse.json()
     const appointments = await appointmentResponse.json()
+    const medicalData = await fetch(process.env.URL + `/api/medicaldata?userId=${session.user.id}`);
+
+    const jsonMedicalData = await medicalData.json();
+    const formattedMedicalData = jsonMedicalData.medicalData.data;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -70,7 +74,34 @@ export default async function Profile() {
                 </div>
 
                 <div className="rounded-lg p-6 shadow-sm">
-                    This is for the medical data
+
+                    <ul className="list-disc list-inside space-y-2">
+                        <li>
+                            <span className="font-bold">Platelets:</span> {formattedMedicalData.hemogram.platelets.value} {formattedMedicalData.hemogram.platelets.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.platelets.lastUpdated}</span>
+                        </li>
+                        <li>
+                            <span className="font-bold">Hemoglobin:</span> {formattedMedicalData.hemogram.hemoglobin.value} {formattedMedicalData.hemogram.hemoglobin.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.hemoglobin.lastUpdated}</span>
+                        </li>
+                        <li>
+                            <span className="font-bold">Red Blood Cells:</span> {formattedMedicalData.hemogram.redBloodCells.value} {formattedMedicalData.hemogram.redBloodCells.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.redBloodCells.lastUpdated}</span>
+                        </li>
+                        <li>
+                            <span className="font-bold">White Blood Cells:</span> {formattedMedicalData.hemogram.whiteBloodCells.value} {formattedMedicalData.hemogram.whiteBloodCells.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.whiteBloodCells.lastUpdated}</span>
+                        </li>
+                        <li>
+                            <span className="font-bold">Mean Corpuscular Volume:</span> {formattedMedicalData.hemogram.meanCorpuscularVolume.value} {formattedMedicalData.hemogram.meanCorpuscularVolume.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.meanCorpuscularVolume.lastUpdated}</span>
+                        </li>
+                        <li>
+                            <span className="font-bold">Mean Corpuscular Hemoglobin:</span> {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.value} {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.unit}
+                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.lastUpdated}</span>
+                        </li>
+                    </ul>
+
                 </div>
                 <Separator className="my-6" />
                 <h2 className="text-2xl font-bold mb-6">Your Medical Reports</h2>
