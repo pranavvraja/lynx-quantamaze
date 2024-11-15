@@ -69,7 +69,7 @@ async def process_pdf(pdf_request: PDFRequest):
         messages = [
             # {"role": "system", "content": "From the given medical report and the previous data of the patient, update them into the new report data in json file format if the previous data exists, otherwise return only the contents of the report in key-pair value in  json file format, nothing else. Do not format the json either, no \n and so on "},
             {
-                "role": "system", "content": "Return the updated medical report data strictly in raw JSON format. Include only key-value pairs for each metric, updating values if previous data exists. If no previous data exists, return only the contents of the report in raw JSON format. Strictly do not add any explanations, labels, code snippets, formatting instructions, or extra text—return JSON data only and nothing else."
+                "role": "system", "content": "Return the updated medical report data strictly in raw JSON format. Include only key-value pairs for each metric, updating values if previous data exists. If no previous data exists, return only the contents of the report in raw JSON format. Add a field of report_date for each metric. Strictly do not add any explanations, labels, code snippets, formatting instructions, or extra text—return JSON data only and nothing else."
             },
             {
                 "role": "user", "content": f"Data: {data}\nExtracted Text: {extracted_text}"
@@ -90,7 +90,12 @@ async def process_pdf(pdf_request: PDFRequest):
         data['groq_response'] = completion
         # response_content
 
-        return {"updated_data": data}
+        # print(data['groq_response'].choices[0])
+
+        # print(completion.choices[0].message)
+
+        # return {"updated_data": data['groq_response'].choices[0]}
+        return completion.choices[0].message.content
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
