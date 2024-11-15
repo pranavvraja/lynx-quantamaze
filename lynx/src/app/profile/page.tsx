@@ -26,6 +26,7 @@ export default async function Profile() {
 
     const jsonMedicalData = await medicalData.json();
     const formattedMedicalData = jsonMedicalData.medicalData.data;
+    const summary = jsonMedicalData.medicalData.summary;
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -75,32 +76,41 @@ export default async function Profile() {
 
                 <div className="rounded-lg p-6 shadow-sm">
 
-                    <ul className="list-disc list-inside space-y-2">
-                        <li>
-                            <span className="font-bold">Platelets:</span> {formattedMedicalData.hemogram.platelets.value} {formattedMedicalData.hemogram.platelets.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.platelets.lastUpdated}</span>
-                        </li>
-                        <li>
-                            <span className="font-bold">Hemoglobin:</span> {formattedMedicalData.hemogram.hemoglobin.value} {formattedMedicalData.hemogram.hemoglobin.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.hemoglobin.lastUpdated}</span>
-                        </li>
-                        <li>
-                            <span className="font-bold">Red Blood Cells:</span> {formattedMedicalData.hemogram.redBloodCells.value} {formattedMedicalData.hemogram.redBloodCells.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.redBloodCells.lastUpdated}</span>
-                        </li>
-                        <li>
-                            <span className="font-bold">White Blood Cells:</span> {formattedMedicalData.hemogram.whiteBloodCells.value} {formattedMedicalData.hemogram.whiteBloodCells.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.whiteBloodCells.lastUpdated}</span>
-                        </li>
-                        <li>
-                            <span className="font-bold">Mean Corpuscular Volume:</span> {formattedMedicalData.hemogram.meanCorpuscularVolume.value} {formattedMedicalData.hemogram.meanCorpuscularVolume.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.meanCorpuscularVolume.lastUpdated}</span>
-                        </li>
-                        <li>
-                            <span className="font-bold">Mean Corpuscular Hemoglobin:</span> {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.value} {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.unit}
-                            <span className="block text-sm text-gray-500">Last updated: {formattedMedicalData.hemogram.meanCorpuscularHemoglobin.lastUpdated}</span>
-                        </li>
-                    </ul>
+                    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto my-6">
+                        <div className="bg-gray-100 p-6 rounded-lg shadow-md max-w-5xl mx-auto my-6">
+                            <h2 className="text-3xl font-bold text-gray-800 mb-6">Summary </h2>
+                            <div className="text-black">{summary}</div>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-6">Medical Report</h2>
+                            {Object.entries(formattedMedicalData).map(([section, tests]) => (
+                                <div key={section} className="mb-8">
+                                    <h3 className="text-2xl font-semibold text-blue-600 capitalize mb-4">
+                                        {section.replace(/([A-Z])/g, " $1")}
+                                    </h3>
+                                    <ul className="list-none space-y-3 text-black">
+                                        {Object.entries(tests as { [key: string]: any }).map(([test, details]) => (
+                                            <li
+                                                key={test}
+                                                className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                                            >
+                                                <span className="font-bold capitalize">
+                                                    {test.replace(/([A-Z])/g, " $1")}
+                                                </span>
+                                                <div className="text-right">
+                                                    <p className="text-gray-800">
+                                                        {details.value || <span className="text-gray-400">—</span>}{" "}
+                                                        {details.unit || ""}
+                                                    </p>
+                                                    <p className="text-sm text-gray-500">
+                                                        {details.lastUpdated || <span className="text-gray-400">—</span>}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
                 </div>
                 <Separator className="my-6" />

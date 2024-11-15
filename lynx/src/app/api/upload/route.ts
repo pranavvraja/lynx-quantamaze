@@ -94,7 +94,7 @@ export async function POST(req: Request) {
         const formattedData = currentJson[0]?.data || defaultMedicalReport; // Or format this data as needed
 
         // Then, use the formattedData in your POST request:
-        const extract = await fetch("https://b95b-36-255-14-9.ngrok-free.app/process-pdf", {
+        const extract = await fetch("https://1db8-36-255-14-9.ngrok-free.app/process-pdf", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -102,21 +102,27 @@ export async function POST(req: Request) {
             body: JSON.stringify({ pdf_url: fileUrl, data: formattedData })
         });
 
+        console.log('Extract:', extract);
         const extracted = await extract.json();
 
         console.log(extracted);
 
-        const parsedExtracted = JSON.parse(extracted);
+        // const parsedExtracted = JSON.parse(extracted);
+
+        //console.log(parsedExtracted);
+        const parsedExtracted = JSON.parse(extracted[0]);
 
         const uploadeddata = await prisma.medicalData.upsert({
             where: {
                 userId: userId
             },
             update: {
-                data: parsedExtracted
+                data: parsedExtracted,
+                summary: extracted[1]
             }, create: {
                 userId: userId,
-                data: parsedExtracted
+                data: parsedExtracted,
+                summary: extracted[1]
             }
         })
 

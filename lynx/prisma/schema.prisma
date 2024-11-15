@@ -139,10 +139,11 @@ model Files {
 }
 
 model medicalData {
-  id     String @id @default(cuid())
-  userId String @unique
-  User   User?  @relation(fields: [userId], references: [id])
-  data   Json   @default("{}")
+  id      String @id @default(cuid())
+  userId  String @unique
+  User    User?  @relation(fields: [userId], references: [id])
+  summary String @default("No summary")
+  data    Json   @default("{}")
 }
 
 model prescription {
