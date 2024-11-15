@@ -30,3 +30,26 @@ export async function POST(req: Request) {
 
     } catch (error) { console.error('Error saving file to DB: ', error); }
 }
+
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const patientId = searchParams.get('patientId');
+
+    try {
+        const prescription = await prisma.prescription.findMany({
+            where: { patientId: patientId || undefined },
+        });
+
+        if (!prescription || prescription.length === 0) {
+            return NextResponse.json(
+                { message: "No prescription found for this user." },
+                { status: 404 }
+            );
+        }
+        console.log('Prescription:', prescription);
+        return NextResponse.json(prescription, { status: 200 });
+    } catch (error) {
+        console.error('Error fetching prescription: ', error);
+        return NextResponse.json({ error: 'Failed to fetch prescription' }, { status: 500 });
+    }
+}

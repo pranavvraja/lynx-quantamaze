@@ -28,6 +28,9 @@ export default async function Profile() {
     const formattedMedicalData = jsonMedicalData.medicalData.data;
     const summary = jsonMedicalData.medicalData.summary;
 
+    const presc = await fetch(process.env.URL + `/api/prescription?patientId=${session.user.id}`);
+    const prescriptions = await presc.json();
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -113,27 +116,61 @@ export default async function Profile() {
                     </div>
 
                 </div>
+                <h2 className="text-2xl font-bold mb-6">Your Prescription</h2>
+                <Separator className="my-6" />
+                <div className="p-4 bg-white rounded-lg shadow-lg">
+                    <ul className="list-none space-y-4">
+                        {prescriptions.map((prescription: any) => (
+                            <li key={prescription.id} className="bg-white p-4 rounded-lg shadow-sm">
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Prescription URL: </span>
+                                    <a
+                                        href={prescription.prescriptionUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline"
+                                    >
+                                        Open Prescription
+                                    </a>
+                                </p>
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Summary: </span>
+                                    {prescription.summary || <span className="text-gray-400">No summary provided</span>}
+                                </p>
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Created At: </span>
+                                    {new Date(prescription.createdAt).toLocaleString()}
+                                </p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
                 <Separator className="my-6" />
                 <h2 className="text-2xl font-bold mb-6">Your Medical Reports</h2>
                 <div className="p-4 bg-white rounded-lg shadow-lg">
                     {allfiles.length > 0 ? (
                         <div className="space-y-4">
                             {allfiles.map((file: any) => (
-                                <div key={file.id} className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow duration-200">
-                                    <p className="text-gray-700 font-medium">
-                                        <p>
-                                            {file.name}
+                                <div
+                                    key={file.id}
+                                    className="p-4 border border-gray-300 rounded-md shadow-sm hover:shadow-md transition-shadow duration-200 bg-white"
+                                >
+                                    <div className="space-y-2">
+                                        <p className="text-gray-800 font-semibold">
+                                            {file.name || <span className="text-gray-400">No name provided</span>}
                                         </p>
                                         <a
                                             href={file.url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-500 hover:underline"
+                                            className="text-blue-500 hover:underline break-all"
                                         >
-                                            {file.url}
+                                            {file.url || <span className="text-gray-400">No URL provided</span>}
                                         </a>
-                                    </p>
+                                    </div>
                                 </div>
+
                             ))}
                         </div>
                     ) : (
