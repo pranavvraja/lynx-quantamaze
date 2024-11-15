@@ -5,6 +5,7 @@ import { Key } from "react"
 import { prisma } from "@/prisma"
 import { boolean } from "zod"
 import { notFound } from "next/navigation"
+import DocUpload from "@/components/docuploadthing/docupload"
 
 export default async function Profile({ params }: { params: { id: string } }) {
     const session = await auth();
@@ -61,7 +62,11 @@ export default async function Profile({ params }: { params: { id: string } }) {
     return (
         <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl">
             <div className="grid-cols md:grid-cols-[300px_1fr] gap-8">
+
                 <h1 className="font-bold text-2xl" >Reports of {userData.user.name}</h1>
+                <div>
+                    <DocUpload patientId={patientId} />
+                </div>
                 <div className="p-4 bg-white rounded-lg shadow-lg">
                     {allfiles.length > 0 ? (
                         <div className="space-y-4">

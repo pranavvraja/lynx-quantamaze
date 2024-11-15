@@ -144,3 +144,11 @@ model medicalData {
   User   User?  @relation(fields: [userId], references: [id])
   data   Json   @default("{}")
 }
+
+model prescription {
+  id              String   @id @default(cuid())
+  patientId       String
+  prescriptionUrl String
+  summary         String   @default("No summary")
+  createdAt       DateTime @default(now())
+}
