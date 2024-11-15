@@ -74,7 +74,7 @@ export default async function Profile() {
                             {allfiles.map((file: any) => (
                                 <div key={file.id} className="p-4 border rounded-md shadow-sm hover:shadow-md transition-shadow duration-200">
                                     <p className="text-gray-700 font-medium">
-                                        {file.name}
+                                        {file}
                                         <a
                                             href={file.url}
                                             target="_blank"

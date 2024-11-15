@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Gender } from "@prisma/client";
+import Link from "next/link";
 
 export default async function ClinicDashboardPage({ params }: { params: { id: string } }) {
 
@@ -50,13 +50,16 @@ export default async function ClinicDashboardPage({ params }: { params: { id: st
     const appointments = await prisma.appointment.findMany({
         where: {
             clinicId: clinicId,
-            appointmentDate: {
-                gte: new Date(new Date().setHours(0, 0, 0, 0))
-            }
+            // appointmentDate: {
+            //     gte: new Date(new Date().setHours(0, 0, 0, 0))
+            // }
         },
         orderBy: {
             appointmentDate: 'asc'
         },
+        include: {
+            User: true
+        }
     })
 
     const today = new Date().toLocaleDateString('en-GB');
@@ -70,62 +73,27 @@ export default async function ClinicDashboardPage({ params }: { params: { id: st
             <div className="md:flex min-h-screen w-full flex-col mt-10  hidden">
                 <div className="flex flex-col sm:gap-4 sm:py-4 sm:p-10">
                     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-                        <h2 className="font-bold text-2xl">Date : {today}</h2>
+                        <h2 className="font-bold text-2xl">Patients Lists</h2>
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Ap. No</TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Phone</TableHead>
-                                    <TableHead>Age</TableHead>
-                                    <TableHead>Gender</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Action</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Booked A</TableHead>
+                                    <TableHead>Reports</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {
-                                    appointments.map((appointment: {
-                                        id: string;
-                                        patientName: string;
-                                        phone: string;
-                                        patientAge: number;
-                                        patientGender: Gender;
-                                        appointmentDate: Date;
-                                        appointmentNumber: number;
-                                        clinicId: string;
-                                        bookedByUserId: string;
-                                        status: string;
-                                        createdAt: Date;
-                                        updatedAt: Date;
-
-                                    }) => (
-                                        <TableRow key={appointment.id}>
-                                            <TableCell>{appointment.appointmentNumber}</TableCell>
-                                            <TableCell className="font-medium">{appointment.patientName}</TableCell>
-                                            <TableCell>{appointment.phone}</TableCell>
-                                            <TableCell>{appointment.patientAge}</TableCell>
-                                            <TableCell>{appointment.patientGender}</TableCell>
-                                            <TableCell>
-                                                <Badge variant="default">{appointment.status}</Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                            <MoveHorizontalIcon className="h-4 w-4" />
-                                                            <span className="sr-only">Toggle menu</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                                                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                }
+                                {appointments.map((appointment) => (
+                                    <TableRow key={appointment.User?.id}>
+                                        <TableCell>{appointment.User?.name}</TableCell>
+                                        <TableCell>{appointment.appointmentDate.toLocaleDateString()}</TableCell>
+                                        <TableCell>{appointment.User?.email}</TableCell>
+                                        <TableCell>{appointment.createdAt.toLocaleDateString()}</TableCell>
+                                        <TableCell><Link href={`/reports/${appointment.User?.id}`}>Here</Link></TableCell>
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </main>
