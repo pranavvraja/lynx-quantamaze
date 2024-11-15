@@ -18,6 +18,49 @@ export async function POST(req: Request) {
             },
         });
 
+        //send the url link to the model along with the json
+
+        const currentJson = await prisma.medicalData.findMany({
+            where: { userId: userId || undefined },
+            select: {
+                data: true
+            }
+        });
+
+        // Assuming currentJson is an array, you might need to extract the first element:
+        const formattedData = currentJson[0]?.data || {}; // Or format this data as needed
+
+        // Then, use the formattedData in your POST request:
+        const extract = await fetch("https://cf1f-36-255-14-9.ngrok-free.app/process-pdf", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pdf_url: fileUrl, data: formattedData })
+        });
+
+        const extracted = await extract.json();
+
+        console.log(extracted);
+
+        const uploadeddata = await prisma.medicalData.upsert({
+            where: {
+                userId: userId
+            },
+            update: {
+                data: extracted
+            }, create: {
+                userId: userId,
+                data: extracted
+            }
+        })
+
+
+        // get the update json
+        //store the json 
+
+
+
         return NextResponse.json(newFile, { status: 201 });
     } catch (error) {
         console.error('Error saving file to DB:', error);
