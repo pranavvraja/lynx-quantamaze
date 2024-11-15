@@ -37,7 +37,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange>
           <Navbar />
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-grow">
+              {children}
+            </div>
+            <hr className="border-gray-300 w-full" />
+            <footer className="flex items-center justify-center w-full h-16 text-white">
+              <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
+            </footer>
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

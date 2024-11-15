@@ -13,7 +13,7 @@ export default async function Home() {
       <HeroSection />
       <HeroImage />
       <Features />
-      <MaskPdfName />
+      {/* <MaskPdfName /> */}
       <UploadImage userId={session?.user.id} />
     </div>
   );

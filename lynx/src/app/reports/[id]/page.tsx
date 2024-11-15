@@ -54,6 +54,18 @@ export default async function Profile({ params }: { params: { id: string } }) {
     const allfiles = await files.json();
     const userData = await userResponse.json()
 
+    const appointmentResponse = await fetch(process.env.URL + `/api/appointments/user/${patientId}`);
+    const appointments = await appointmentResponse.json()
+    const medicalData = await fetch(process.env.URL + `/api/medicaldata?userId=${patientId}`);
+
+    const jsonMedicalData = await medicalData.json();
+    const formattedMedicalData = jsonMedicalData.medicalData.data;
+    const summary = jsonMedicalData.medicalData.summary;
+
+    const presc = await fetch(process.env.URL + `/api/prescription?patientId=${patientId}`);
+    const prescriptions = await presc.json();
+
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -67,7 +79,41 @@ export default async function Profile({ params }: { params: { id: string } }) {
                 <div>
                     <DocUpload patientId={patientId} />
                 </div>
-                <div className="p-4 bg-white rounded-lg shadow-lg">
+                <div>
+                    <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                        <h2 className="pt-6 text-3xl font-bold text-gray-800 mb-6">Medical Report</h2>
+                        {Object.entries(formattedMedicalData).map(([section, tests]) => (
+                            <div key={section} className="mb-8">
+                                <h3 className="text-2xl font-semibold text-blue-600 capitalize mb-4">
+                                    {section.replace(/([A-Z])/g, " $1")}
+                                </h3>
+                                <ul className="list-none space-y-3 text-black">
+                                    {Object.entries(tests as { [key: string]: any }).map(([test, details]) => (
+                                        <li
+                                            key={test}
+                                            className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center"
+                                        >
+                                            <span className="font-bold capitalize">
+                                                {test.replace(/([A-Z])/g, " $1")}
+                                            </span>
+                                            <div className="text-right">
+                                                <p className="text-gray-800">
+                                                    {details.value || <span className="text-gray-400">—</span>}{" "}
+                                                    {details.unit || ""}
+                                                </p>
+                                                <p className="text-sm text-gray-500">
+                                                    {details.lastUpdated || <span className="text-gray-400">—</span>}
+                                                </p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <h2 className="pt-6 text-3xl font-bold text-white mb-6">Medical Documents</h2>
+                <div className="mt-10 p-4 bg-white rounded-lg shadow-lg">
                     {allfiles.length > 0 ? (
                         <div className="space-y-4">
                             {allfiles.map((file: any) => (
@@ -89,6 +135,36 @@ export default async function Profile({ params }: { params: { id: string } }) {
                     ) : (
                         <p className="text-gray-500">No files found.</p>
                     )}
+                </div>
+
+                <Separator className="my-6" />
+                <h2 className="text-2xl font-bold mb-6">Patient's  Prescription</h2>
+                <div className="p-4 bg-white rounded-lg shadow-lg">
+                    <ul className="list-none space-y-4">
+                        {prescriptions.map((prescription: any) => (
+                            <li key={prescription.id} className="bg-white p-4 rounded-lg shadow-sm">
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Prescription URL: </span>
+                                    <a
+                                        href={prescription.prescriptionUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline"
+                                    >
+                                        Open Prescription
+                                    </a>
+                                </p>
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Summary: </span>
+                                    {prescription.summary || <span className="text-gray-400">No summary provided</span>}
+                                </p>
+                                <p className="text-gray-800">
+                                    <span className="font-semibold">Created At: </span>
+                                    {new Date(prescription.createdAt).toLocaleString()}
+                                </p>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
             </div>

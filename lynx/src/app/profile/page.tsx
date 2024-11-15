@@ -61,7 +61,6 @@ export default async function Profile() {
 
     return (
         <div className="container mx-auto px-4 md:px-6 py-8 max-w-5xl">
-
             <div className="grid-cols md:grid-cols-[300px_1fr] gap-8">
                 <div className=" p-6  max-h-min">
                     <div className="flex items-center gap-4">
@@ -78,12 +77,11 @@ export default async function Profile() {
                 </div>
 
                 <div className="rounded-lg p-6 shadow-sm">
-
-                    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto my-6">
-                        <div className="bg-gray-100 p-6 rounded-lg shadow-md max-w-5xl mx-auto my-6">
+                    <div className="bg-white p-6 rounded-lg shadow-md my-6">
+                        <div className="bg-gray-100 p-6 rounded-lg shadow-md">
                             <h2 className="text-3xl font-bold text-gray-800 mb-6">Summary </h2>
                             <div className="text-black">{summary}</div>
-                            <h2 className="text-3xl font-bold text-gray-800 mb-6">Medical Report</h2>
+                            <h2 className="pt-6 text-3xl font-bold text-gray-800 mb-6">Medical Report</h2>
                             {Object.entries(formattedMedicalData).map(([section, tests]) => (
                                 <div key={section} className="mb-8">
                                     <h3 className="text-2xl font-semibold text-blue-600 capitalize mb-4">
@@ -114,7 +112,6 @@ export default async function Profile() {
                             ))}
                         </div>
                     </div>
-
                 </div>
                 <h2 className="text-2xl font-bold mb-6">Your Prescription</h2>
                 <Separator className="my-6" />
@@ -199,11 +196,6 @@ export default async function Profile() {
                                     <h3 className="text-lg font-bold">{new Date(appointment.appointmentDate).toLocaleDateString('en-GB')}</h3>
                                     <p className="font-bold text-md">Appointment Number :  {appointment.appointmentNumber}</p>
                                     <div className="md:flex mt-2">
-                                        <div className="md:mr-20">
-                                            <p>Patient Name : {appointment.patientName}</p>
-                                            <p>Age: {appointment.patientAge}</p>
-                                            <p>Gender: {appointment.patientGender}</p>
-                                        </div>
                                         <div className="md:mt-0 mt-3">
                                             <p>Cinic name : {appointment.clinic.name}</p>
                                             <p>Address : {appointment.clinic.address}</p>
